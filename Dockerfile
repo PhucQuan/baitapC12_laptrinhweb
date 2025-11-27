@@ -20,11 +20,11 @@ FROM tomcat:10.1-jdk11
 # Remove default Tomcat applications
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Copy the WAR file from builder stage
-COPY --from=builder /app/target/SQLGatewayApp.war /usr/local/tomcat/webapps/SQLGatewayApp.war
+# Copy the WAR file from builder stage (ROOT.war deploys at root context)
+COPY --from=builder /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
 # Copy Docker-specific context.xml for database configuration
-COPY context-docker.xml /usr/local/tomcat/conf/Catalina/localhost/SQLGatewayApp.xml
+COPY context-docker.xml /usr/local/tomcat/conf/Catalina/localhost/ROOT.xml
 
 # Expose Tomcat port
 EXPOSE 8080
