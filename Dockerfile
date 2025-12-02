@@ -15,8 +15,8 @@ COPY src ./src
 # Build the WAR file
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime with Tomcat
-FROM tomcat:10.1-jdk11
+# Stage 2: Runtime with Tomcat 11 (for Jakarta EE support)
+FROM tomcat:11.0-jdk11
 
 # Remove default Tomcat applications
 RUN rm -rf /usr/local/tomcat/webapps/*
@@ -24,7 +24,8 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Copy the WAR file from builder stage (ROOT.war deploys at root context)
 COPY --from=builder /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Context.xml is already embedded in WAR file with correct Render database config
+# Copy Render-specific context.xml for database configuration
+COPY src/main/webapp/META-INF/context-render.xml /usr/local/tomcat/conf/Catalina/localhost/ROOT.xml
 
 # Expose Tomcat port
 EXPOSE 8080
